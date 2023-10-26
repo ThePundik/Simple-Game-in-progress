@@ -2,6 +2,11 @@ import pygame, sys
 from bullet import Bullet
 from ino import Ino
 import time
+import random
+
+
+alien_spawn_timer = 1000
+
 
 def events(screen, gun, bullets):
     """Обработка событий"""
@@ -83,20 +88,25 @@ def inos_check(stats, screen, sc, gun, inos, bullets):
 
 def create_army(screen, inos):
     """создание армии пришельцев"""
-    ino = Ino(screen)
-    ino_width = ino.rect.width
-    number_ino_x = int((700 - 2 * ino_width) / ino_width)
-    ino_height = ino.rect.height
-    number_ino_y = int((800 - 100 - 2 * ino_height) / ino_height)
+    global alien_spawn_timer  # Объявляем глобальную переменную для таймера
+    current_time = pygame.time.get_ticks()
 
-    for row_number in range(number_ino_y - 1):
-        for ino_number in range(number_ino_x):
+    if current_time - alien_spawn_timer >= 1000:  # Проверяем, прошла ли секунда
+        num_aliens = random.randint(1, 3)  # Генерируем случайное количество инопланетян (от 1 до 3)
+        for _ in range(num_aliens):
             ino = Ino(screen)
-            ino.x = ino_width + (ino_width * ino_number)
-            ino.y = ino_height + (ino_height * row_number)
+            ino_width = ino.rect.width
+            ino_height = ino.rect.height
+            ino.x = random.randint(0, screen.get_width() - ino_width)
+            ino.y = 0
             ino.rect.x = ino.x
-            ino.rect.y = ino.rect.height + ino.rect.height * row_number
+            ino.rect.y = ino.y
+            # Проверяем, не пересекается ли новый инопланетян с существующими
+            while pygame.sprite.spritecollide(ino, inos, False):
+                ino.x = random.randint(0, screen.get_width() - ino_width)
+                ino.rect.x = ino.x
             inos.add(ino)
+        alien_spawn_timer = current_time
 
 def check_high_score(stats, sc):
     """проверка новых рекордов"""
