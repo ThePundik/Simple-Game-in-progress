@@ -24,6 +24,7 @@ def run():
             controls.update(bg_color, screen, stats, sc, gun, inos, bullets)
             controls.update_bullets(screen, stats, sc, inos, bullets)
             controls.update_inos(stats, screen, sc, gun, inos, bullets)
+            controls.create_army(screen, inos)
 
 
 run()
